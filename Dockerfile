@@ -2,14 +2,11 @@ FROM node:22-slim
 
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm@latest
-
 # Copy package files
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json ./
 
-# Install dependencies
-RUN pnpm install --no-frozen-lockfile
+# Install dependencies with npm
+RUN npm install
 
 # Copy application code
 COPY . .
@@ -18,4 +15,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the application
-CMD ["pnpm", "run", "dev"]
+CMD ["npm", "run", "dev"]
