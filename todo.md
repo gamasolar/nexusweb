@@ -10,8 +10,22 @@
 
 - [ ] Define data flow and processing pipeline
 
-## Phase 2: Indicators Engine
+## Phase 2: Hybrid Architecture Integration
 
+### Analysis & Architecture
+- [x] Analyze previous Python implementation (9000 lines, 13 indicators)
+- [x] Compare with new TypeScript implementation
+- [x] Define hybrid architecture (Python backend + TypeScript web)
+- [x] Create integration strategy document
+
+### PostgreSQL Integration
+- [x] Get PostgreSQL connection details from NEXUS system
+- [ ] Configure web app to connect to PostgreSQL
+- [ ] Adapt schema to use existing nexus_historical_prices table
+- [ ] Use existing nexus_technical_indicators table
+- [ ] Test connection and data retrieval
+
+### Indicators Implementation
 - [x] Implement SMA (Simple Moving Average) indicator
 - [x] Create SMA calculation service with caching
 - [x] Add SMA validation against historical data
