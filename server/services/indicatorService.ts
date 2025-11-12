@@ -26,7 +26,8 @@ export async function saveIndicator(data: InsertIndicator): Promise<void> {
     throw new Error("Database not available");
   }
 
-  await db.insert(indicators).values(data).onDuplicateKeyUpdate({
+  await db.insert(indicators).values(data).onConflictDoUpdate({
+    target: [indicators.symbol, indicators.timestamp, indicators.timeframe, indicators.indicatorType, indicators.parameters],
     set: {
       value: data.value,
       updatedAt: new Date(),
@@ -49,12 +50,7 @@ export async function saveIndicatorsBatch(data: InsertIndicator[]): Promise<void
   const batchSize = 1000;
   for (let i = 0; i < data.length; i += batchSize) {
     const batch = data.slice(i, i + batchSize);
-    await db.insert(indicators).values(batch).onDuplicateKeyUpdate({
-      set: {
-        value: batch[0].value, // This is a placeholder, actual values come from the VALUES clause
-        updatedAt: new Date(),
-      },
-    });
+    await db.insert(indicators).values(batch).onConflictDoNothing();
   }
 }
 

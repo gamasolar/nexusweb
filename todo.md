@@ -18,12 +18,15 @@
 - [x] Define hybrid architecture (Python backend + TypeScript web)
 - [x] Create integration strategy document
 
-### PostgreSQL Integration
+### PostgreSQL Integration (Phase 1 - Current)
 - [x] Get PostgreSQL connection details from NEXUS system
-- [ ] Configure web app to connect to PostgreSQL
-- [ ] Adapt schema to use existing nexus_historical_prices table
-- [ ] Use existing nexus_technical_indicators table
-- [ ] Test connection and data retrieval
+- [ ] Update DATABASE_URL environment variable
+- [ ] Configure Drizzle to use PostgreSQL instead of MySQL
+- [ ] Create TypeScript types for existing tables
+- [ ] Test connection and query nexus_historical_prices
+- [ ] Create Python wrapper script
+- [ ] Implement tRPC endpoint to invoke Python
+- [ ] Test end-to-end integration
 
 ### Indicators Implementation
 - [x] Implement SMA (Simple Moving Average) indicator
@@ -156,3 +159,26 @@
 
 - [ ] Final system review
 
+
+## Phase 8: Alert System (Web + Telegram)
+
+### Telegram Integration
+- [ ] Port telegram_notifier.py from Python system
+- [ ] Port alert_manager.py with anti-spam filters
+- [ ] Implement Telegram Bot API integration
+- [ ] Configure Telegram webhook/polling
+- [ ] Test Telegram message formatting
+
+### Web Notifications
+- [ ] Create web notification system (WebSocket/polling)
+- [ ] Implement real-time alert display
+- [ ] Create alert history page with filters
+- [ ] Add alert configuration UI
+- [ ] Implement alert preferences (per symbol, timeframe, signal type)
+
+### Unified Alert System
+- [ ] Create dual alert system (Web + Telegram)
+- [ ] Implement alert routing logic
+- [ ] Add user preference management
+- [ ] Create alert statistics dashboard
+- [ ] Test end-to-end alert flow

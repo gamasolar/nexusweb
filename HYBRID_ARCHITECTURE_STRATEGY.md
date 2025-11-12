@@ -62,6 +62,12 @@ O backend TypeScript, construído com tRPC + Express, será responsável pela or
 
 As APIs tRPC fornecerão endpoints type-safe para o frontend, incluindo consulta de indicadores, sinais de trading, análise multi-timeframe, parâmetros de risk management, histórico de alertas e métricas de performance. O backend TypeScript também gerenciará conexões com PostgreSQL, leitura de dados históricos e escrita de resultados calculados.
 
+**Sistema de Alertas Dual (Web + Telegram):**
+
+O sistema de alertas será híbrido, mantendo o Telegram Bot original do sistema Python e adicionando notificações web. Os alertas Telegram continuarão funcionando via `telegram_notifier.py` e `alert_manager.py`, com filtros anti-spam, confiança mínima configurável e tempo mínimo entre alertas. Adicionalmente, o sistema web terá notificações em tempo real via WebSocket/polling, histórico completo de alertas com filtros e busca, e configuração de preferências (quais sinais receber, timeframes, moedas).
+
+Os usuários poderão escolher receber alertas via Telegram, Web, ou ambos, com configuração individual por tipo de sinal e moeda. O histórico de alertas será unificado no PostgreSQL (tabela `nexus_alerts`), acessível tanto pelo bot Telegram quanto pelo dashboard web.
+
 **Frontend React (Dashboard Web):**
 
 O frontend React fornecerá dashboard interativo com visualização de sinais em tempo real, gráficos de candles com indicadores sobrepostos, tabelas de análise multi-timeframe e painel de risk management. A interface incluirá sistema de alertas com histórico e configurações, métricas de performance e estatísticas, e configurações de usuário e preferências.
@@ -92,9 +98,9 @@ Novas tabelas serão criadas conforme necessário para suportar funcionalidades 
 
 ### Fase 3: Implementar Dashboard Completo (3-4 dias)
 
-**Objetivos:** Criar gráficos de candles com indicadores, implementar tabelas de análise, adicionar painel de risk management, criar sistema de alertas web e implementar métricas de performance.
+**Objetivos:** Criar gráficos de candles com indicadores, implementar tabelas de análise, adicionar painel de risk management, criar sistema de alertas web (+ Telegram) e implementar métricas de performance.
 
-**Entregáveis:** Dashboard web profissional completo, visualizações interativas, sistema de alertas integrado.
+**Entregáveis:** Dashboard web profissional completo, visualizações interativas, sistema de alertas dual (Web + Telegram) integrado.
 
 ### Fase 4: Otimização e Testes (2-3 dias)
 
@@ -142,11 +148,14 @@ nexus_intelligence_system/
 │   │   ├── signal_fusion.py      # Signal Fusion Engine
 │   │   ├── risk_manager.py       # Risk Management V2.0
 │   │   ├── multitimeframe.py     # Análise multi-timeframe
+│   │   ├── telegram_notifier.py  # Sistema de alertas Telegram
+│   │   ├── alert_manager.py      # Gerenciamento de alertas e anti-spam
 │   │   └── wrapper.py            # Wrapper para invocar via TypeScript
 │   ├── services/                  # Serviços TypeScript
 │   │   ├── pythonService.ts      # Invoca scripts Python
 │   │   ├── indicatorService.ts   # Gerencia indicadores
 │   │   ├── signalService.ts      # Gerencia sinais
+│   │   ├── alertService.ts       # Gerencia alertas (Web + Telegram)
 │   │   └── cacheService.ts       # Redis caching
 │   ├── routers.ts                # tRPC routers
 │   └── db.ts                     # Database queries
@@ -156,12 +165,15 @@ nexus_intelligence_system/
 │   │   │   ├── Dashboard.tsx     # Dashboard principal
 │   │   │   ├── Signals.tsx       # Página de sinais
 │   │   │   ├── Charts.tsx        # Gráficos interativos
-│   │   │   └── Settings.tsx      # Configurações
+│   │   │   ├── Alerts.tsx        # Histórico e configuração de alertas
+│   │   │   └── Settings.tsx      # Configurações (incluindo Telegram)
 │   │   └── components/
 │   │       ├── CandleChart.tsx   # Gráfico de candles
 │   │       ├── IndicatorChart.tsx # Indicadores sobrepostos
 │   │       ├── SignalCard.tsx    # Card de sinal
-│   │       └── RiskPanel.tsx     # Painel de risk management
+│   │       ├── AlertCard.tsx     # Card de alerta
+│   │       ├── RiskPanel.tsx     # Painel de risk management
+│   │       └── TelegramConfig.tsx # Configuração do Telegram Bot
 └── drizzle/
     └── schema.ts                 # Schema adaptado para PostgreSQL
 ```
