@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, and, desc, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, marketCandles, type MarketCandle } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,64 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+/**
+ * Market Data Queries
+ */
+
+export interface GetMarketCandlesParams {
+  symbol: string;
+  timeframe: string;
+  startTime?: Date;
+  endTime?: Date;
+  limit?: number;
+}
+
+export async function getMarketCandles(
+  params: GetMarketCandlesParams
+): Promise<MarketCandle[]> {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const conditions = [
+    eq(marketCandles.symbol, params.symbol),
+    eq(marketCandles.timeframe, params.timeframe),
+  ];
+
+  if (params.startTime) {
+    conditions.push(gte(marketCandles.timestamp, params.startTime));
+  }
+
+  if (params.endTime) {
+    conditions.push(lte(marketCandles.timestamp, params.endTime));
+  }
+
+  const result = await db
+    .select()
+    .from(marketCandles)
+    .where(and(...conditions))
+    .orderBy(desc(marketCandles.timestamp))
+    .limit(params.limit || 1000);
+
+  return result.reverse(); // Return in chronological order
+}
+
+export async function getLatestCandle(
+  symbol: string,
+  timeframe: string
+): Promise<MarketCandle | undefined> {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const result = await db
+    .select()
+    .from(marketCandles)
+    .where(and(eq(marketCandles.symbol, symbol), eq(marketCandles.timeframe, timeframe)))
+    .orderBy(desc(marketCandles.timestamp))
+    .limit(1);
+
+  return result[0];
+}
